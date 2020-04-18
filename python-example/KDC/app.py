@@ -16,8 +16,7 @@ def homepage():
 
 @app.route('/api/login', methods=['POST'])
 def api_login():
-    data = request.form.to_dict()
-
+    data = request.get_json()
     if 'username' not in data or data['username'].strip() == '':
         return Response(json.dumps({'success': False, 'err': 'Incomplete Fields'}), mimetype="application/json", status=400)
 
@@ -33,7 +32,7 @@ def api_login():
 
 @app.route('/tickets',methods=['POST'])
 def tickets():
-    data = request.form.to_dict()
+    data = request.get_json()
     if 'req' not in data:
         return Response(json.dumps({'success': False,'err':'No req found'}), mimetype="application/json", status=400)
     if 'tgt' not in data:
