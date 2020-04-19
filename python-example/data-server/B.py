@@ -4,7 +4,7 @@ from flask_cors import CORS
 from Kerberos import Server,ServerError
 app = Flask(__name__, static_folder='./static', static_url_path='/')
 cors = CORS(app)
-server = Server.make_server_from_db('B')
+server = Server.make_server_from_db('B',check_rand=True)
 
 # initial data
 book_data = ['General Theory of Relativity','Quantum Electrodynamics']
@@ -16,7 +16,7 @@ def get_data():
     ticket = data['ticket']
     try:
         req = server.decrypt_req('u1',request.remote_addr,ticket,req)
-
+        server.verify_rand('u1',request.remote_addr(),req.get('rand',None))
         res = {'success':True}
         if req['req'] == 'data':
             res['res'] = book_data

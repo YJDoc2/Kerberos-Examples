@@ -5,7 +5,7 @@ async function refreshTicket(name) {
   const decTicket = client.getTicket(`dec${name}`);
   if (
     !ticket ||
-    decTicket.timestamp + decTicket.lifetime < Date.now() - errDelta
+    decTicket.timestamp + decTicket.lifetime < Date.now() + errDelta
   ) {
     const auth = client.getTicket('decAuth');
     const key = auth.key;
@@ -34,7 +34,10 @@ async function login() {
   let pass = document.querySelector('#password').value;
 
   try {
-    const res = (await axios.post('/api/login', { username: username })).data;
+    const rand = Math.floor(Math.random() * 1000);
+    const res = (
+      await axios.post('/api/login', { username: username, rand: rand })
+    ).data;
     const enc = new TextEncoder();
     const passEnc = enc.encode(pass);
     const hashBuffer = await crypto.subtle.digest('SHA-256', passEnc); // hash the message
@@ -49,7 +52,7 @@ async function login() {
     client.saveTicket('Auth', res.auth);
     client.saveTicket('tgt', res.tgt);
   } catch (e) {
-    console.log(e);
+    console.log(e.response.data);
   }
 }
 
@@ -62,6 +65,8 @@ async function serverAGet() {
   try {
     await refreshTicket('A');
     let req = {};
+    req.rand = Math.floor(Math.random() * 1000);
+
     const ticket = client.getTicket('A');
     const decA = client.getTicket('decA');
     const serEncReq = client.encryptReq(req, decA.key, decA.init_val);
@@ -78,7 +83,7 @@ async function serverAGet() {
     });
     document.querySelector('#ServerAData').innerHTML = template;
   } catch (e) {
-    console.log(e);
+    console.log(e.response.data);
   }
 }
 
@@ -95,6 +100,7 @@ async function serverASave() {
   try {
     await refreshTicket('A');
     let req = { book: input };
+    req.rand = Math.floor(Math.random() * 1000);
     const ticket = client.getTicket('A');
     const decA = client.getTicket('decA');
     const serEncReq = client.encryptReq(req, decA.key, decA.init_val);
@@ -118,6 +124,7 @@ async function serverBGet() {
   try {
     await refreshTicket('B');
     let req = { req: 'data' };
+    req.rand = Math.floor(Math.random() * 1000);
     const ticket = client.getTicket('B');
     const decB = client.getTicket('decB');
     const serEncReq = client.encryptReq(req, decB.key, decB.init_val);
@@ -151,6 +158,7 @@ async function serverBSave() {
   try {
     await refreshTicket('B');
     req = { req: 'add', book: input };
+    req.rand = Math.floor(Math.random() * 1000);
     const ticket = client.getTicket('B');
     const decB = client.getTicket('decB');
     const serEncReq = client.encryptReq(req, decB.key, decB.init_val);
