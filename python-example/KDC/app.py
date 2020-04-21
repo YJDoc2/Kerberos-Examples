@@ -29,7 +29,7 @@ def api_login():
     hash_key = h.hexdigest()[0:32]
     try:
         auth,tgt = kdc.gen_auth_tickets(data['rand'],data['username'],request.remote_addr,hash_key)
-        return Response(json.dumps({'success': True, 'auth':auth,'tgt':tgt}), mimetype="application/json", status=200)
+        return Response(json.dumps({'success': True, 'auth':auth.decode('ascii'),'tgt':tgt.decode('ascii')}), mimetype="application/json", status=200)
     except ServerError as e:
        return Response(json.dumps({'success': False,'err':str(e)}), mimetype="application/json", status=400)
 
@@ -41,8 +41,8 @@ def tickets():
     if 'tgt' not in data:
         return Response(json.dumps({'success': False,'err':'No tgt found'}), mimetype="application/json", status=400)
     try:
-        res,ticket = kdc.get_res_and_ticket('u1',request.remote_addr,data['tgt'],data['req'],lifetime_ms=5000)
-        return Response(json.dumps({'success': True,'res':res,'ticket':ticket}), mimetype="application/json", status=200)
+        res,ticket = kdc.get_res_and_ticket('u1',request.remote_addr,data['tgt'],data['req'])
+        return Response(json.dumps({'success': True,'res':res.decode('ascii'),'ticket':ticket.decode('ascii')}), mimetype="application/json", status=200)
     except ServerError as e:
         return Response(json.dumps({'success': False,'err':str(e)}), mimetype="application/json", status=400)
     

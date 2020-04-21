@@ -16,9 +16,10 @@ def get_data():
     req = data['req']
     ticket = data['ticket']
     try:
-        req = server.decrypt_req('u1',request.remote_addr(),ticket,req)
-        server.verify_rand('u1',request.remote_addr(),req.get('rand',None))
-        enc_res = server.encrypt_res('u1',request.remote_addr(),ticket,{'success': True,'res':book_data})
+        print()
+        req = server.decrypt_req('u1',request.remote_addr,ticket,req)
+        server.verify_rand('u1',request.remote_addr,req.get('rand',None))
+        enc_res = server.encrypt_res('u1',request.remote_addr,ticket,{'success': True,'res':book_data})
         return Response(enc_res, status=200)
     except ServerError as e:
         return Response(str(e),400)
@@ -29,10 +30,10 @@ def add_data():
     req = data['req']
     ticket = data['ticket']
     try:
-        req = server.decrypt_req('u1',request.remote_addr(),ticket,req)
-        server.verify_rand('u1',request.remote_addr(),req.get('rand',None))
+        req = server.decrypt_req('u1',request.remote_addr,ticket,req)
+        server.verify_rand('u1',request.remote_addr,req.get('rand',None))
         book_data.append(req['book'])
-        enc_res = server.encrypt_res('u1',request.remote_addr(),ticket,{'success':'true'})
+        enc_res = server.encrypt_res('u1',request.remote_addr,ticket,{'success':'true'})
         return Response(enc_res, status=200)
     except ServerError as e:
         return Response(str(e),400)
