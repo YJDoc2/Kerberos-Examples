@@ -12,10 +12,19 @@ passIp = None
 
 client = None
 
+
+auth_err = None
+
 def login():
     global username,password,usernameIp,passIp,client
     username = usernameIp.get()
     password = passIp.get()
+
+    if username.strip() == '' or password.strip() == '':
+        auth_err.config(text = 'Please Fill all details')
+        return False
+
+
     hash = SHA256.new()
     hash.update(password.encode('ascii'))
     pass_hash = hash.hexdigest().encode('ascii')[:32]
@@ -27,7 +36,7 @@ def login():
     data = res.json()
     try:
         if not data['success']:
-            print(data['err'])
+            auth_err.config(text = data['err'])
             return False
         else:
             client = KClient(pass_hash.decode('ascii'))
@@ -37,5 +46,5 @@ def login():
             client.save_ticket('tgt',data['tgt'])
             return True
     except:
-        print('Invalid Password')
-        return
+        auth_err.config(text = 'Invalid Password')
+        return False

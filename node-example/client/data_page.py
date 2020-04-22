@@ -12,6 +12,7 @@ buttonGet = None
 buttonSend = None
 text = None
 
+
 def refreshTicket(name):
     ticket = common.client.get_ticket(name)
     decTicket = common.client.get_ticket(f'dec{name}')
@@ -43,15 +44,19 @@ class Data_Page(tk.Frame):
         bookInput = tk.Entry(self,bg='white',fg='black',font='Times 20')
         bookInput.place(relx = 0.3,rely = 0.6)
         buttonGet = tk.Button(self,text = 'Get Data',padx="10",pady="5",bg='green',fg='white',font='Times 22 bold',command=self.get_data)
-        buttonGet.place(relx = 0.2,rely=0.8)
+        buttonGet.place(relx = 0.2,rely=0.7)
 
         buttonSend = tk.Button(self,text = 'Send Data',padx="10",pady="5",bg='green',fg='white',font='Times 22 bold',command=self.send_data)
-        buttonSend.place(relx = 0.6,rely=0.8)
+        buttonSend.place(relx = 0.6,rely=0.7)
+
+        self.err = tk.Label(self,text = '',font = 'Times 20',fg = '#ff0000')
+        self.err.place(relx=0.3,rely=0.85)
 
         text = tk.Text(self,height = 15,width=50,font='Times 10')
         text.place(relx=0.2,rely=0.05)
 
     def get_data(self):
+        self.err.config(text = '')
         global buttonGet,buttonSend,bookInput,text
         refreshTicket('Books')
         req = {}
@@ -72,15 +77,17 @@ class Data_Page(tk.Frame):
             text.delete('1.0',tk.END)
             text.insert(tk.INSERT,txt)
         else:
-            print(data['err'])
+            self.err.config(text = data['err'])
             return
             
         
 
     def send_data(self):
         global buttonGet,buttonSend,bookInput
+        self.err.config(text = '')
         book = bookInput.get().strip()
         if book == '':
+            self.err.config(text = 'Please fill input for data')
             return
 
         refreshTicket('Books')
@@ -97,5 +104,5 @@ class Data_Page(tk.Frame):
             #print(decRes) # {}
             bookInput.delete(0,tk.END)
         else:
-            print(data['err'])
+            self.err.config(text = data['err'])
             return

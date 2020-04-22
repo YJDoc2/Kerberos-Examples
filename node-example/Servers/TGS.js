@@ -31,11 +31,14 @@ app.post('/', (request, response) => {
   }
 
   try {
+    const decReq = TGS.decryptReq(req, user, request.ips[0] || request.ip, tgt);
+    TGS.verifyRand(user, request.ips[0] || request.ip, decReq.rand);
     let { res, ticket } = TGS.getResponseAndTicket(
       user,
       request.ips[0] || request.ip,
       tgt,
-      req
+      decReq.target,
+      decReq.rand
     );
 
     return response
@@ -44,6 +47,8 @@ app.post('/', (request, response) => {
   } catch (e) {
     if (e instanceof Kerberos.ServerError) {
       return response.status(400).send({ success: false, err: e.message });
+    } else {
+      throw e;
     }
   }
 });

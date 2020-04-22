@@ -12,11 +12,14 @@ class Auth_Page(tk.Frame):
         common.usernameIp = tk.Entry(self,bg='white',fg='black',font='Times 20')
         common.passIp = tk.Entry(self,bg='white',show='*',fg='black',font='Times 20')
 
-        common.usernameIp.place(relx = 0.3,rely = 0.3)
-        common.passIp.place(relx = 0.3,rely = 0.5)
+        common.usernameIp.place(relx = 0.3,rely = 0.2)
+        common.passIp.place(relx = 0.3,rely = 0.4)
 
+        common.auth_err = tk.Label(self,text = '',font = 'Times 20',fg = '#ff0000')
+        common.auth_err.place(relx=0.3,rely=0.7)
+        
         btnLogin = tk.Button(self,text = 'Login',padx="10",pady="5",bg='green',fg='white',font='Times 20',command=lambda : common.login() and controller.show_frame(Data_Page) )
-        btnLogin.place(relx=0.4,rely=0.7)
+        btnLogin.place(relx=0.4,rely=0.5)
 
 
 

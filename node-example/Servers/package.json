@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./AS.js & nodemon ./TGS.js & nodemon BookServer.js"
+    "dev": "nodemon ./AS.js & nodemon ./TGS.js & nodemon BookServer.js",
+    "start": "node ./AS.js & node ./TGS.js & node BookServer.js"
   },
   "author": "YJ",
   "license": "MIT",

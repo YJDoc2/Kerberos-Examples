@@ -16,7 +16,7 @@ def get_data():
     ticket = data['ticket']
     try:
         req = server.decrypt_req('u1',request.remote_addr,ticket,req)
-        server.verify_rand('u1',request.remote_addr(),req.get('rand',None))
+        server.verify_rand('u1',request.remote_addr,req.get('rand',None))
         res = {'success':True}
         if req['req'] == 'data':
             res['res'] = book_data

@@ -1,5 +1,17 @@
 let client = null;
 const errDelta = 5000;
+
+function showError(e) {
+  console.log(e);
+  const err = document.querySelector('#error');
+  const errStr = e.response ? e.response.data.err : e;
+  err.innerHTML = errStr;
+}
+
+function clearError() {
+  document.querySelector('#error').innerHTML = '';
+}
+
 async function refreshTicket(name) {
   const ticket = client.getTicket(name);
   const decTicket = client.getTicket(`dec${name}`);
@@ -32,6 +44,7 @@ async function refreshTicket(name) {
 async function login() {
   let username = document.querySelector('#username').value;
   let pass = document.querySelector('#password').value;
+  clearError();
 
   try {
     const rand = Math.floor(Math.random() * 1000);
@@ -52,13 +65,16 @@ async function login() {
     client.saveTicket('Auth', res.auth);
     client.saveTicket('tgt', res.tgt);
   } catch (e) {
-    console.log(e.response.data);
+    if (e instanceof ReferenceError) {
+      showError('Incorrect Password');
+    }
   }
 }
 
 async function serverAGet() {
+  clearError();
   if (!client) {
-    console.log('Please Log in with valid credentials');
+    showError('Please Log in with valid credentials');
     return;
   }
 
@@ -83,13 +99,14 @@ async function serverAGet() {
     });
     document.querySelector('#ServerAData').innerHTML = template;
   } catch (e) {
-    console.log(e.response.data);
+    showError(e);
   }
 }
 
 async function serverASave() {
+  clearError();
   if (!client) {
-    console.log('Please Log in with valid credentials');
+    showError('Please Log in with valid credentials');
     return;
   }
   const input = document.querySelector('#dataA').value.trim();
@@ -111,13 +128,14 @@ async function serverASave() {
       })
     ).data;
   } catch (e) {
-    console.log(e.response.data);
+    showError(e);
   }
 }
 
 async function serverBGet() {
+  clearError();
   if (!client) {
-    console.log('Please Log in with valid credentials');
+    showError('Please Log in with valid credentials');
     return;
   }
 
@@ -141,13 +159,14 @@ async function serverBGet() {
     });
     document.querySelector('#ServerBData').innerHTML = template;
   } catch (e) {
-    console.log(e.response.data);
+    showError(e);
   }
 }
 
 async function serverBSave() {
+  clearError();
   if (!client) {
-    console.log('Please Log in with valid credentials');
+    showError('Please Log in with valid credentials');
     return;
   }
   const input = document.querySelector('#dataB').value.trim();
@@ -169,6 +188,6 @@ async function serverBSave() {
       })
     ).data;
   } catch (e) {
-    console.log(e.response.data);
+    showError(e);
   }
 }
