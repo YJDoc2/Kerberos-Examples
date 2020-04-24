@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const Kerberos = require('./Kerberos');
+const Kerberos = require('./Kerberos-JS');
 
 let data = ['Gravitation', 'Spacetime And Geomatry'];
 

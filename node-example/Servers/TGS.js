@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const Kerberos = require('./Kerberos');
+const Kerberos = require('./Kerberos-JS');
 
 const app = express();
 const EXPRESS_PORT = process.env.PORT || 5002;

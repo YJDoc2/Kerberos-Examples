@@ -41,7 +41,9 @@ def tickets():
     if 'tgt' not in data:
         return Response(json.dumps({'success': False,'err':'No tgt found'}), mimetype="application/json", status=400)
     try:
-        res,ticket = kdc.get_res_and_ticket('u1',request.remote_addr,data['tgt'],data['req'])
+        req = kdc.decrypt_req(data['req'],'u1',request.remote_addr,data['tgt'])
+        kdc.verify_rand('u1',request.remote_addr,req['rand'])
+        res,ticket = kdc.get_res_and_ticket('u1',request.remote_addr,data['tgt'],req['target'],req['rand'])
         return Response(json.dumps({'success': True,'res':res.decode('ascii'),'ticket':ticket.decode('ascii')}), mimetype="application/json", status=200)
     except ServerError as e:
         return Response(json.dumps({'success': False,'err':str(e)}), mimetype="application/json", status=400)
