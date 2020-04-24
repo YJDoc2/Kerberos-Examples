@@ -82,7 +82,9 @@
   </div>
   <h2><div id="error" class="p-2 my-5 text-danger text-center"></div></h2>
 </div>
+<!--? The order of Kerberos and axios does not matter as axios is only used as util lib for making request to server from frontend-->
 <script src="/kerberos.min.js"></script>
+<!-- ? But Kerberos must be included before the script as the scripte used classes defined in kerberos-->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/script.js"></script>
 
