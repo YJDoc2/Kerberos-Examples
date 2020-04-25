@@ -34,7 +34,7 @@ def api_login():
     if 'username' not in data or data['username'].strip() == '' or 'rand' not in data:
         return Response(json.dumps({'success': False, 'err': 'Incomplete Fields'}), mimetype="application/json", status=400)
 
-    #* Here we retrive the password from out 'DB'
+    #* Here we retrive the password from our 'DB'
     #* in real application here one would contact a DB and query for username
     password = users.get(data['username'],None)
 

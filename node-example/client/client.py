@@ -3,10 +3,12 @@ import tkinter as tk
 from auth_page import Auth_Page
 from data_page import Data_Page
 
+#! Client GUI Page
+#! Most of tkinter code and design is done after https://pythonprogramming.net/change-show-new-frame-tkinter/
 
 class Client(tk.Tk):
     def __init__(self,*args,**kwargs):
-
+        #* Display setup
         tk.Tk.__init__(self,*args,**kwargs)
         
         container = tk.Frame(self)
@@ -27,7 +29,7 @@ class Client(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
-
+#! NOTE the client in following is not Kerberos client but the client GUI class above
 app = Client()
 app.title('Kerberos Example')
 app.mainloop()
