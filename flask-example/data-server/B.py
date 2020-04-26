@@ -22,10 +22,11 @@ def get_data():
     ticket = data['ticket']
     try:
          #? we first try to decode req param in HTTP request recieved
-        req = server.decrypt_req('u1',request.remote_addr,ticket,req)
+        dec_req = server.decrypt_req(req,ticket)
+        req = json.loads(dec_req)
 
         #? Then we verify that the random number used by user is used for the first time
-        server.verify_rand('u1',request.remote_addr,req.get('rand',None))
+        server.verify_rand(req['user'],request.remote_addr,req.get('rand',None))
 
         #? As the req is successfully decrypted, the user is authenticated
         #? And as all possible operations will always succeed in this, we first set res (data, not HTTP) as success True
@@ -39,7 +40,7 @@ def get_data():
             book_data.append(req['book'])
 
         #? we encrypt the respnse(data, not HTTP) that is to be sent
-        enc_res = server.encrypt_res('u1',request.remote_addr,ticket,res)
+        enc_res = server.encrypt_res(req['user'],request.remote_addr,ticket,res)
         
         #? we return HTTP response
         return Response(enc_res, status=200)

@@ -38,7 +38,7 @@ def refreshTicket(name):
         req['uid2'] = auth['uid2']
         req['rand'] = random.randint(0,10000)
         req['target'] = name
-        # TODO CHANGE REQ STRUCT
+        req['user'] = common.username
         #* encrypt request with key provided in auth ticket
         encReq = common.client.encrypt_req(req,auth['key'])
         #* make actual http request
@@ -96,7 +96,7 @@ class Data_Page(tk.Frame):
         #* encrypt the req(data, not http) with key given in response alogn with ticket
         strEncReq = common.client.encrypt_req(req,decT['key'],decT['init_val'])
         #* make actual http request to server
-        res = requests.post('http://localhost:5003/data',data={'req':strEncReq,'ticket':ticket,'user':common.username},timeout = 1)
+        res = requests.post('http://localhost:5003/data',data={'req':strEncReq,'ticket':ticket},timeout = 1)
         data = res.json()
         res.close()
         txt = ''
@@ -128,15 +128,15 @@ class Data_Page(tk.Frame):
         refreshTicket('Books')
         req = {'book':book}
         req['rand'] = random.randint(0,10000)
+        req['user'] = common.username
         ticket = common.client.get_ticket('Books')
         decT = common.client.get_ticket('decBooks')
         strEncReq = common.client.encrypt_req(req,decT['key'],decT['init_val'])
-        res = requests.post('http://localhost:5003/add',data={'req':strEncReq,'ticket':ticket,'user':common.username},timeout = 1)
+        res = requests.post('http://localhost:5003/add',data={'req':strEncReq,'ticket':ticket},timeout = 1)
         data = res.json()
         res.close()
         if data['success']:
             decRes = common.client.decrypt_res(data['res'],decT['key'],decT['init_val']) 
-            #print(decRes) # {}
             bookInput.delete(0,tk.END)
         else:
             self.err.config(text = data['err'])

@@ -27,10 +27,10 @@ const TGS = new Kerberos.KerberosTGS(aescryptor, serverdb, true);
 //TGS.addServer('Books');
 
 app.post('/', (request, response) => {
-  const { req, tgt, user } = request.body;
+  const { req, tgt } = request.body;
 
   //* Sanity Checks
-  if (!req || !user) {
+  if (!req) {
     return response
       .status(400)
       .send({ success: false, err: 'Incomplete Fields' });
@@ -41,8 +41,9 @@ app.post('/', (request, response) => {
 
   try {
     //* decrypt the request (data not http) using the key of this server
-    const decReq = TGS.decryptReq(req, user, request.ips[0] || request.ip, tgt);
-
+    const decReqStr = TGS.decryptReq(req, tgt);
+    const decReq = JSON.parse(decReqStr);
+    const user = decReq.user;
     //? then we verify that the random number sent in the req is used for the first time by the user to
     //? prevent replay attacks. This is kept a distinct step from decoding the request,
     //? as it is not necessary that the request be an json as encoded string

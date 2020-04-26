@@ -1,5 +1,6 @@
-//* We need client as global variable so we can access it from all functions
+//* We need client and user as global variable so we can access it from all functions
 let client = null;
+let user = '';
 //? It may be possible that by the time our request sent to a server using Kerberos reches it,
 //? the ticket that we sent is gets expired , in edge cases.
 //? So we use a error delta here so than in refresh ticket function below if the remaining time for ticket's expiry is
@@ -35,8 +36,8 @@ async function refreshTicket(name) {
     decTicket.timestamp + decTicket.lifetime < Date.now() + errDelta
   ) {
     const auth = client.getTicket('decAuth');
-    const key = auth.key;
     let req = {};
+    req.user = user;
     req.uid1 = auth.uid1;
     req.uid2 = auth.uid2;
     req.rand = Math.floor(Math.random() * 1000);
@@ -65,6 +66,7 @@ async function refreshTicket(name) {
 async function login() {
   //* Get data from the html elements
   let username = document.querySelector('#username').value;
+  user = username;
   let pass = document.querySelector('#password').value;
   //* clear the error div
   clearError();
@@ -118,6 +120,7 @@ async function serverAGet() {
     let req = {};
     //* Make new random for sending
     req.rand = Math.floor(Math.random() * 1000);
+    req.user = user;
 
     const ticket = client.getTicket('A');
     const decA = client.getTicket('decA');
@@ -167,6 +170,7 @@ async function serverASave() {
     let req = { book: input };
     //* Make a random number to send along with request
     req.rand = Math.floor(Math.random() * 1000);
+    req.user = user;
     //* get the tickets
     const ticket = client.getTicket('A');
     const decA = client.getTicket('decA');
@@ -180,6 +184,9 @@ async function serverASave() {
         ticket: ticket,
       })
     ).data;
+
+    //* Clear the input
+    document.querySelector('#dataA').value = '';
   } catch (e) {
     showError(e);
   }
@@ -197,6 +204,7 @@ async function serverBGet() {
     await refreshTicket('B');
     let req = { req: 'data' };
     req.rand = Math.floor(Math.random() * 1000);
+    req.user = user;
     const ticket = client.getTicket('B');
     const decB = client.getTicket('decB');
     const serEncReq = client.encryptReq(req, decB.key, decB.init_val);
@@ -233,6 +241,7 @@ async function serverBSave() {
     await refreshTicket('B');
     req = { req: 'add', book: input };
     req.rand = Math.floor(Math.random() * 1000);
+    req.user = user;
     const ticket = client.getTicket('B');
     const decB = client.getTicket('decB');
     const serEncReq = client.encryptReq(req, decB.key, decB.init_val);
@@ -242,6 +251,8 @@ async function serverBSave() {
         ticket: ticket,
       })
     ).data;
+    //* Clear the input
+    document.querySelector('#dataB').value = '';
   } catch (e) {
     showError(e);
   }

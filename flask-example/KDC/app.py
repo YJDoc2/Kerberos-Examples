@@ -75,19 +75,23 @@ def tickets():
         return Response(json.dumps({'success': False,'err':'No tgt found'}), mimetype="application/json", status=400)
     try:
         #? We first decode the req field that is sent inside the http request
-        req = kdc.decrypt_req(data['req'],'u1',request.remote_addr,data['tgt'])
-        #TODO : Remove Parse json from decode req and separate decryption and rand check etc
+        dec_req = kdc.decrypt_req(data['req'],data['tgt'])
+        try:
+            req = json.loads(dec_req)
+        except Exception as e:
+            return Response(json.dumps({'success': False,'err':'Invalid request'}), mimetype="application/json", status=400)
+
         #? then we verify that the random number sent in the req is used for the first time by the user to
         #? prevent replay attacks. This is kept a distinct step from decoding the request,
         #? as it is not necessary that the request be an json as encoded string
         #? thus we can retrieve random number from it as it is stored and then verify it in this step.
-        kdc.verify_rand('u1',request.remote_addr,req['rand'])
+        kdc.verify_rand(req['user'],request.remote_addr,req['rand'])
 
         #? here we get response for the client and ticket that the client requested.
         #? NOTE that the response is not a http response, but an encrypted response which only the client can open with 
         #? the key sent in the auth ticket originally, and contains key to encrypt the requests
         #? that are to be sent to the requested server.
-        res,ticket = kdc.get_res_and_ticket('u1',request.remote_addr,data['tgt'],req['target'],req['rand'])
+        res,ticket = kdc.get_res_and_ticket(req['user'],request.remote_addr,data['tgt'],req['target'],req['rand'])
         return Response(json.dumps({'success': True,'res':res.decode('ascii'),'ticket':ticket.decode('ascii')}), mimetype="application/json", status=200)
     except ServerError as e:
         return Response(json.dumps({'success': False,'err':str(e)}), mimetype="application/json", status=400)

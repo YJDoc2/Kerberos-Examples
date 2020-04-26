@@ -20,9 +20,9 @@ const server = Kerberos.Server.MakeServerFromDB('Books', null, null, true);
 
 app.post('/data', (req, res) => {
   const inReq = req.body.req;
-  const { ticket, user } = req.body;
+  const { ticket } = req.body;
   //* Sanity check
-  if (!inReq || !ticket || !user) {
+  if (!inReq || !ticket) {
     return res.status(400).send({ success: false, err: 'Incomplete Fields' });
   }
 
@@ -30,8 +30,9 @@ app.post('/data', (req, res) => {
     let uid2 = req.ips[0] || req.ip;
 
     //* decrypt the request (data not http) using the key of this server
-    let decReq = server.decryptReq(user, uid2, ticket, inReq);
-
+    const decReqStr = server.decryptReq(inReq, ticket);
+    const decReq = JSON.parse(decReqStr);
+    const user = decReq.user;
     //* Then we verify that the random number used by user is used for the first time
     server.verifyRand(user, uid2, decReq.rand);
 
@@ -54,17 +55,19 @@ app.post('/data', (req, res) => {
 
 app.post('/add', (req, res) => {
   const inReq = req.body.req;
-  const { ticket, user } = req.body;
+  const { ticket } = req.body;
 
   //* Sanity Checks
-  if (!inReq || !ticket || !user) {
+  if (!inReq || !ticket) {
     return res.status(400).send({ success: false, err: 'Incomplete Fields' });
   }
   try {
     let uid2 = req.ips[0] || req.ip;
 
     //* decrypt the request (data not http) using the key of this server
-    let decReq = server.decryptReq(user, uid2, ticket, inReq);
+    const decReqStr = server.decryptReq(inReq, ticket);
+    const decReq = JSON.parse(decReqStr);
+    const user = decReq.user;
 
     //* Then we verify that the random number used by user is used for the first time
     server.verifyRand(user, uid2, decReq.rand);
