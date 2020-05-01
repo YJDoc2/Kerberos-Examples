@@ -40,7 +40,7 @@ def refreshTicket(name):
         req['target'] = name
         req['user'] = common.username
         #* encrypt request with key provided in auth ticket
-        encReq = common.client.encrypt_req(req,auth['key'])
+        encReq = common.client.encrypt_req(auth['key'],req)
         #* make actual http request
         res = requests.post('http://localhost:5002',data={'req':encReq,'tgt':common.client.get_ticket('tgt'),'user':common.username})
         data = res.json()
@@ -49,7 +49,7 @@ def refreshTicket(name):
             raise Exception(data['err'])
         else:
             #* If successful save the encrypted ticket we got and save the response we got along with it after decryption
-            resDec = common.client.decrypt_res(data['res'],auth['key'])
+            resDec = common.client.decrypt_res(auth['key'],data['res'])
             common.client.save_ticket(name,data['ticket'])
             common.client.save_ticket(f'dec{name}',resDec)
 
@@ -94,7 +94,7 @@ class Data_Page(tk.Frame):
         decT = common.client.get_ticket('decBooks')
 
         #* encrypt the req(data, not http) with key given in response alogn with ticket
-        strEncReq = common.client.encrypt_req(req,decT['key'],decT['init_val'])
+        strEncReq = common.client.encrypt_req(decT['key'],req,decT['init_val'])
         #* make actual http request to server
         res = requests.post('http://localhost:5003/data',data={'req':strEncReq,'ticket':ticket},timeout = 1)
         data = res.json()
@@ -103,7 +103,7 @@ class Data_Page(tk.Frame):
 
         if data['success']:
             #* if succeded decryt the response (data not http)
-            decRes = common.client.decrypt_res(data['res'],decT['key'],decT['init_val'])
+            decRes = common.client.decrypt_res(decT['key'],data['res'],decT['init_val'])
             #* show data to user
             for i,b in enumerate(decRes):
                 txt += f'Book {i+1} : {b}\n'
@@ -131,12 +131,12 @@ class Data_Page(tk.Frame):
         req['user'] = common.username
         ticket = common.client.get_ticket('Books')
         decT = common.client.get_ticket('decBooks')
-        strEncReq = common.client.encrypt_req(req,decT['key'],decT['init_val'])
+        strEncReq = common.client.encrypt_req(decT['key'],req,decT['init_val'])
         res = requests.post('http://localhost:5003/add',data={'req':strEncReq,'ticket':ticket},timeout = 1)
         data = res.json()
         res.close()
         if data['success']:
-            decRes = common.client.decrypt_res(data['res'],decT['key'],decT['init_val']) 
+            decRes = common.client.decrypt_res(decT['key'],data['res'],decT['init_val']) 
             bookInput.delete(0,tk.END)
         else:
             self.err.config(text = data['err'])

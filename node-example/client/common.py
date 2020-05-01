@@ -1,7 +1,7 @@
 import tkinter as tk
 import random
 from Crypto.Hash import SHA256
-from Kerberos.kerberso_client import Client as  KClient
+from Kerberos.kerberos_client import Client as  KClient
 import requests
 
 #? Common variables that are shared in both data and login page
@@ -53,8 +53,8 @@ def login():
     else:
         try:
             #* If successded then create client and decode and save the auth ticket & TGT
-            client = KClient(pass_hash.decode('ascii'))
-            auth = client.decrypt_res(data['auth'],pass_hash)
+            client = KClient()
+            auth = client.decrypt_res(pass_hash,data['auth'])
             #* save decode auth ticket
             client.save_ticket('decAuth',auth)
             #* save original auth ticket
@@ -62,7 +62,7 @@ def login():
             #* save Ticket Granting Ticket
             client.save_ticket('tgt',data['tgt'])
             return True
-        except:
+        except :
             #* if any error in decryption, it means that the password provided was incorrect
             auth_err.config(text = 'Invalid Password')
             return False

@@ -48,18 +48,18 @@ app.post('/', (request, response) => {
     //? prevent replay attacks. This is kept a distinct step from decoding the request,
     //? as it is not necessary that the request be an json as encoded string
     //? thus we can retrieve random number from it as it is stored and then verify it in this step.
-    TGS.verifyRand(user, request.ips[0] || request.ip, decReq.rand);
+    TGS.verifyRand(decReq.rand, user, request.ips[0] || request.ip);
 
     //? here we get response for the client and ticket that the client requested.
     //? NOTE that the response is not a http response, but an encrypted response which only the client can open with
     //? the key sent in the auth ticket originally, and contains key to encrypt the requests
     //? that are to be sent to the requested server.
-    let { res, ticket } = TGS.getResponseAndTicket(
+    let { res, ticket } = TGS.getResAndTicket(
+      decReq.rand,
+      decReq.target,
       user,
       request.ips[0] || request.ip,
-      tgt,
-      decReq.target,
-      decReq.rand
+      tgt
     );
 
     //* Send the actual http response

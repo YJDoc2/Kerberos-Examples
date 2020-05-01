@@ -1,7 +1,7 @@
 import json
 from Crypto.Hash import SHA256
 from flask import Flask, render_template, redirect, Response, jsonify,request
-from Kerberos import Kerberos_KDC,ServerError
+from Kerberos import Kerberos_KDC,Server_Error
 app = Flask(__name__, static_folder='./static', static_url_path='/')
 
 #* We create a KDC with ability to check and verify random
@@ -56,9 +56,9 @@ def api_login():
         #* the auth ticket is encrypted with user's unique pass hash,
         #* and it contains key to encrypt the request sent to TGS with
         #? Here username and ip address is used as two uids for the function
-        auth,tgt = kdc.gen_auth_tickets(data['rand'],data['username'],request.remote_addr,hash_key)
+        auth,tgt = kdc.make_auth_tickets(data['rand'],data['username'],request.remote_addr,hash_key)
         return Response(json.dumps({'success': True, 'auth':auth.decode('ascii'),'tgt':tgt.decode('ascii')}), mimetype="application/json", status=200)
-    except ServerError as e:
+    except Server_Error as e:
         #! In case some error is occures which is Server error that is an error in generating the tickets, we send error response.
         #! In case some other type of error is thrown, it may be due to incorrect configuration
         #! Such as passing empty c_uid1 or c_uid2 fields or the hash_key is of incorrect type
@@ -85,15 +85,15 @@ def tickets():
         #? prevent replay attacks. This is kept a distinct step from decoding the request,
         #? as it is not necessary that the request be an json as encoded string
         #? thus we can retrieve random number from it as it is stored and then verify it in this step.
-        kdc.verify_rand(req['user'],request.remote_addr,req['rand'])
+        kdc.verify_rand(req['rand'],req['user'],request.remote_addr)
 
         #? here we get response for the client and ticket that the client requested.
         #? NOTE that the response is not a http response, but an encrypted response which only the client can open with 
         #? the key sent in the auth ticket originally, and contains key to encrypt the requests
         #? that are to be sent to the requested server.
-        res,ticket = kdc.get_res_and_ticket(req['user'],request.remote_addr,data['tgt'],req['target'],req['rand'])
+        res,ticket = kdc.get_res_and_ticket(req['rand'],req['target'],req['user'],request.remote_addr,data['tgt'])
         return Response(json.dumps({'success': True,'res':res.decode('ascii'),'ticket':ticket.decode('ascii')}), mimetype="application/json", status=200)
-    except ServerError as e:
+    except Server_Error as e:
         return Response(json.dumps({'success': False,'err':str(e)}), mimetype="application/json", status=400)
     
 

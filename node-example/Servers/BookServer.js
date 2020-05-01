@@ -34,10 +34,10 @@ app.post('/data', (req, res) => {
     const decReq = JSON.parse(decReqStr);
     const user = decReq.user;
     //* Then we verify that the random number used by user is used for the first time
-    server.verifyRand(user, uid2, decReq.rand);
+    server.verifyRand(decReq.rand, user, uid2);
 
     //* we encrypt the response (data not http)
-    const encRes = server.encryptRes(user, uid2, ticket, data);
+    const encRes = server.encryptRes(user, uid2, data, ticket);
 
     //* Send the actual http response
     return res.status(200).send({ success: true, res: encRes });
@@ -70,13 +70,13 @@ app.post('/add', (req, res) => {
     const user = decReq.user;
 
     //* Then we verify that the random number used by user is used for the first time
-    server.verifyRand(user, uid2, decReq.rand);
+    server.verifyRand(decReq.rand, user, uid2);
 
     //* Save the data in our mock DB, in real application we would operate with actual database here
     data.push(decReq.book);
 
     //* we encrypt the response (data not http)
-    const encRes = server.encryptRes(user, uid2, ticket, {});
+    const encRes = server.encryptRes(user, uid2, {}, ticket);
 
     //* Send the actual http response
     return res.status(200).send({ success: true, res: encRes });

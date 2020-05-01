@@ -44,7 +44,7 @@ async function refreshTicket(name) {
     req.target = name;
 
     //* Encrypt the request(data, not http) to be sent
-    const encReq = client.encryptReq(req, auth.key);
+    const encReq = client.encryptReq(auth.key, req);
 
     const response = (
       await axios.post('/tickets', {
@@ -53,7 +53,7 @@ async function refreshTicket(name) {
       })
     ).data;
     //* Decrypt the response(data not http) sent with ticket
-    const res = client.decryptRes(response.res, auth.key);
+    const res = client.decryptRes(auth.key, response.res);
     //* save decrypted response and ticket
     client.saveTicket(name, response.ticket);
     client.saveTicket(`dec${name}`, res);
@@ -87,10 +87,10 @@ async function login() {
       .join(''); // convert bytes to hex string
     const key = hashHex.substr(0, 32);
     //* Create the Client instance with the key
-    client = new Kerberos.Client(key);
+    client = new Kerberos.Client();
     //* Try to decrypt response(data, not http) sent by server
     //* Throws a error if incorrecr key, that is incorrect password
-    const auth = client.decryptRes(res.auth, key);
+    const auth = client.decryptRes(key, res.auth);
     //* If correct password save decrypted response as decAuth, encrypted response and Ticket Granting Ticket
     client.saveTicket('decAuth', auth);
     client.saveTicket('Auth', res.auth);
@@ -125,7 +125,7 @@ async function serverAGet() {
     const ticket = client.getTicket('A');
     const decA = client.getTicket('decA');
     //* Encrypt our request (data, not http) using the key given in response with ticket A
-    const serEncReq = client.encryptReq(req, decA.key, decA.init_val);
+    const serEncReq = client.encryptReq(decA.key, req, decA.init_val);
     //* send actual(http) request
     const response = (
       await axios.post('http://localhost:5001/data', {
@@ -134,7 +134,7 @@ async function serverAGet() {
       })
     ).data;
     //* decrypt response by same key
-    const res = client.decryptRes(response, decA.key, decA.init_val);
+    const res = client.decryptRes(decA.key, response, decA.init_val);
     //* Show data on page
     let template = '';
     res.res.forEach((entry, i) => {
@@ -175,7 +175,7 @@ async function serverASave() {
     const ticket = client.getTicket('A');
     const decA = client.getTicket('decA');
     //* Encrypt the request with key sent in response along with the ticket
-    const serEncReq = client.encryptReq(req, decA.key, decA.init_val);
+    const serEncReq = client.encryptReq(decA.key, req, decA.init_val);
     //* make actual request
     //? as our server does not send any data in response we don't try to decode it.
     const response = (
@@ -207,14 +207,14 @@ async function serverBGet() {
     req.user = user;
     const ticket = client.getTicket('B');
     const decB = client.getTicket('decB');
-    const serEncReq = client.encryptReq(req, decB.key, decB.init_val);
+    const serEncReq = client.encryptReq(decB.key, req, decB.init_val);
     const response = (
       await axios.post('http://localhost:5002/', {
         req: serEncReq,
         ticket: ticket,
       })
     ).data;
-    const res = client.decryptRes(response, decB.key, decB.init_val);
+    const res = client.decryptRes(decB.key, response, decB.init_val);
     let template = '';
     res.res.forEach((entry, i) => {
       template += `<h6>${entry}</h6>`;
@@ -244,7 +244,7 @@ async function serverBSave() {
     req.user = user;
     const ticket = client.getTicket('B');
     const decB = client.getTicket('decB');
-    const serEncReq = client.encryptReq(req, decB.key, decB.init_val);
+    const serEncReq = client.encryptReq(decB.key, req, decB.init_val);
     const response = (
       await axios.post('http://localhost:5002/', {
         req: serEncReq,

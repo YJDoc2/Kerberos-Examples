@@ -1,7 +1,7 @@
 import json
 from flask import Flask, render_template, redirect, Response, jsonify,request
 from flask_cors import CORS
-from Kerberos import Server,ServerError
+from Kerberos import Server,Server_Error
 app = Flask(__name__, static_folder='./static', static_url_path='/')
 cors = CORS(app)
 
@@ -26,7 +26,7 @@ def get_data():
         req = json.loads(dec_req)
 
         #? Then we verify that the random number used by user is used for the first time
-        server.verify_rand(req['user'],request.remote_addr,req.get('rand',None))
+        server.verify_rand(req.get('rand',None),req['user'],request.remote_addr)
 
         #? As the req is successfully decrypted, the user is authenticated
         #? And as all possible operations will always succeed in this, we first set res (data, not HTTP) as success True
@@ -40,11 +40,11 @@ def get_data():
             book_data.append(req['book'])
 
         #? we encrypt the respnse(data, not HTTP) that is to be sent
-        enc_res = server.encrypt_res(req['user'],request.remote_addr,ticket,res)
+        enc_res = server.encrypt_res(req['user'],request.remote_addr,res,ticket)
         
         #? we return HTTP response
         return Response(enc_res, status=200)
-    except ServerError as e:
+    except Server_Error as e:
         #? If some error occured send the error as reponse, can be encrypted, but not done here
         return Response(str(e),400)
 app.run(host='0.0.0.0', port='5002', debug=True)
