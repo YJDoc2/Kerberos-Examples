@@ -36,7 +36,7 @@ def login():
     #* Produce the user specific key from the password, exactly same as it is done on server
     hash = SHA256.new()
     hash.update(password.encode('ascii'))
-    pass_hash = hash.hexdigest().encode('ascii')[:32]
+    pass_hash = (hash.hexdigest().encode('ascii')[:32]).decode()
 
     #* eandom number to be sent with request
     rand = random.randint(0,10000)
@@ -62,7 +62,7 @@ def login():
             #* save Ticket Granting Ticket
             client.save_ticket('tgt',data['tgt'])
             return True
-        except :
+        except Exception as e:
             #* if any error in decryption, it means that the password provided was incorrect
             auth_err.config(text = 'Invalid Password')
             return False
