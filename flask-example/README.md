@@ -4,10 +4,10 @@ This shows the usage of Kerberos_KDC class with a flask backend and Kerberos.min
 
 # Dependencies
 
-This requires Python 3.8 and pipenv globally installed to work.
-This is tested and also works with Python 3.7, but manual change of version in pipfiles will be required to make it work.
+This requires Python 3.8 and pycryptodome,flask flask-cors modules installed globally or in a virtualenv.
+This is tested and also works with Python 3.7.
 
-This depends on Flask, flask-cors and pycrypto modules to run.
+This depends on Flask, flask-cors and pycryptodome modules to run.
 
 The backend requires Ports 5000, 5001 and 5002 to be free on localhost.
 This can be changed in individual Server python scripts, but then change of url in the script.js in static files in KDC folder will also be required.
@@ -35,5 +35,5 @@ username u2 with password pass2<br />
 
 This requires an internet connection as Bootstrap used for styling and Axios used for AJAX requests need their scripts and files from CDN.
 
-The bash script start sh can be directly used to run all servers. In case pipenv is not installed, or some other route is to be taken for running, one can run the servers in steps as per done in shell script.
+The bash script start sh can be directly used to run all servers, if the dependencies are globally installed, otherwise one can use viertualenv to install them locally using requirements.txt and after activating the env, one can run the start sh script.
 <strong>Note</strong> that even though after stopping the running script _sometimes_ the servers still keep running in background, though usually they will also stop with the script. In the case they don't, they will need to be manually stopped to free the bound ports on localhost.

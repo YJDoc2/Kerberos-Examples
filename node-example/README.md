@@ -8,9 +8,9 @@ The GUI programing is done with help of Tkinter Documentation and <a href='https
 
 # Dependencies
 
-This requires Python 3.8 and pipenv globally installed to work.
+This requires Python 3.8 and pycryptodome,requests modules installed globally or in a virtualenv.
 
-This is tested and also works with Python 3.7, but manual change of version in pipfiles will be required to make it work.
+This is tested and also works with Python 3.7
 
 This requires appropriate Tkinter libraries to be installed for the Client GUI to work.
 
@@ -39,5 +39,5 @@ This has two inbuilt user profiles :<br />
 username u1 with password pass1<br />
 username u2 with password pass2<br />
 
-The bash script start sh can be directly used to run all servers. In case pipenv is not installed, or some other route is to be taken for running, one can run the servers in steps as per done in shell script.
+The bash script start sh can be directly used to run all servers, if the dependencies are globally installed, otherwise one can use viertualenv to install them locally using requirements.txt and after activating the env, one can run the start sh script.
 <strong>Note</strong> that even though after stopping the running script _sometimes_ the servers still keep running in background, though usually they will also stop with the script. In the case they don't, they will need to be manually stopped to free the bound ports on localhost.
