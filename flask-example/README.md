@@ -16,22 +16,22 @@ This can be changed in individual Server python scripts, but then change of url 
 
 The detailed explanation of how the code is set up and works is done through detailed commenting of code, which explains how the Kerberos classes are setup and how the working is done.
 
-<strong>Comments only explain code related to Kerberos Module and library.Setup of flask and other things is not not explained.</strong>
+<strong>Comments only explain code related to Kerberos Module and library. Setup of flask and other things is not not explained.</strong>
 
-Brief explanation is as follows:
+Brief explanation is as follows :
 
-In KDC folder, app python file sets up the Authentication Service and Ticket Granting Service using Kerberos_KDC class on port 5000.
-The Tickets folder contains the server structures that have been already generated.If new Structures are to be generated, first un comment appropriate lines in app py file, then manually copy the newly generated A and B server structures in the data-servers/Tickets folders.
-For generating new TGS_SERVER structure, simply delete the file from there.
+In KDC folder, app py python file sets up the Authentication Service and Ticket Granting Service using Kerberos\*KDC class on port 5000.
+The Tickets folder contains the server structures that have been already generated.If new Structures are to be generated, first uncomment appropriate lines in app py file, then manually copy the newly generated A and B server structures in the data-servers/Tickets folders.
+For generating new TGS_SERVER structure, simply delete the file from Tickets folder.
 
 The data-server contains two server scripts A and B.
 The A server defines two different routes for two operations, while B has single route and uses parameters in encrypted request to decide which action to take.
 
 # Running
 
-This has two inbuilt user profiles :
-username u1 with password pass1
-username u2 with password pass2
+This has two inbuilt user profiles :<br />
+username u1 with password pass1<br />
+username u2 with password pass2<br />
 
 This requires an internet connection as Bootstrap used for styling and Axios used for AJAX requests need their scripts and files from CDN.
 
