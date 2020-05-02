@@ -93,8 +93,9 @@ class Data_Page(tk.Frame):
         #* response we got with ticket giving us key to encrypt our request (data not http) to send to server
         decT = common.client.get_ticket('decBooks')
 
-        #* encrypt the req(data, not http) with key given in response alogn with ticket
+        #* encrypt the req(data, not http) with key given in response along with ticket
         strEncReq = common.client.encrypt_req(decT['key'],req,decT['init_val'])
+
         #* make actual http request to server
         res = requests.post('http://localhost:5003/data',data={'req':strEncReq,'ticket':ticket},timeout = 1)
         data = res.json()
@@ -102,7 +103,7 @@ class Data_Page(tk.Frame):
         txt = ''
 
         if data['success']:
-            #* if succeded decryt the response (data not http)
+            #* if succeeded decrypt the response (data not http)
             decRes = common.client.decrypt_res(decT['key'],data['res'],decT['init_val'])
             #* show data to user
             for i,b in enumerate(decRes):
@@ -119,25 +120,43 @@ class Data_Page(tk.Frame):
 
     def send_data(self):
         global buttonGet,buttonSend,bookInput
+        #* First clear the error
         self.err.config(text = '')
+
+        #* get data to send from text input
         book = bookInput.get().strip()
+
+        #* sanity check
         if book == '':
             self.err.config(text = 'Please fill input for data')
             return
 
+        #* make sure we have the ticket
         refreshTicket('Books')
+
         req = {'book':book}
         req['rand'] = random.randint(0,10000)
         req['user'] = common.username
+
+        #* Ticket which is encrypted and can be decrypted only by the respective server and TGS
         ticket = common.client.get_ticket('Books')
+
+        #* response we got with ticket giving us key to encrypt our request (data not http) to send to server
         decT = common.client.get_ticket('decBooks')
+
+        #* encrypt the req(data, not http) with key given in response along with ticket
         strEncReq = common.client.encrypt_req(decT['key'],req,decT['init_val'])
+
+        #* make actual http request to server
         res = requests.post('http://localhost:5003/add',data={'req':strEncReq,'ticket':ticket},timeout = 1)
         data = res.json()
         res.close()
         if data['success']:
+            #* if succeeded decrypt the response (data not http)
             decRes = common.client.decrypt_res(decT['key'],data['res'],decT['init_val']) 
+            #* clear the input
             bookInput.delete(0,tk.END)
         else:
+            #* show error
             self.err.config(text = data['err'])
             return
