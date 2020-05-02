@@ -1,7 +1,5 @@
 # Flask Example
 
-<hr />
-
 This shows the usage of Kerberos_KDC class with a flask backend and Kerberos.min.js script in plain html-js frontend.
 
 # Dependencies
@@ -30,6 +28,12 @@ The data-server contains two server scripts A and B.
 The A server defines two different routes for two operations, while B has single route and uses parameters in encrypted request to decide which action to take.
 
 # Running
+
+This has two inbuilt user profiles :
+username u1 with password pass1
+username u2 with password pass2
+
+This requires an internet connection as Bootstrap used for styling and Axios used for AJAX requests need their scripts and files from CDN.
 
 The bash script start sh can be directly used to run all servers. In case pipenv is not installed, or some other route is to be taken for running, one can run the servers in steps as per done in shell script.
 <strong>Note</strong> that even though after stopping the running script _sometimes_ the servers still keep running in background, though usually they will also stop with the script. In the case they don't, they will need to be manually stopped to free the bound ports on localhost.

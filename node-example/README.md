@@ -1,7 +1,5 @@
 # Node Example
 
-<hr />
-
 This shows the usage of KerberosAS class and KerberosTGS class on two distinct server to handle the Authentication and Ticket Granting Services. This uses NodeJS with ExpressJs in backend and a python Tkinter GUI client.
 
 <strong>Note</strong> that the setup for the Tkinter GUI program done in client is probably not the best way to do it, and can be done in better way.
@@ -36,6 +34,10 @@ BookServer.js sets up the third server on port 5003 which acts as the server tha
 the python Tkinter GUI client uses requests module to make requests to servers.
 
 # Running
+
+This has two inbuilt user profiles :
+username u1 with password pass1
+username u2 with password pass2
 
 The bash script start sh can be directly used to run all servers. In case pipenv is not installed, or some other route is to be taken for running, one can run the servers in steps as per done in shell script.
 <strong>Note</strong> that even though after stopping the running script _sometimes_ the servers still keep running in background, though usually they will also stop with the script. In the case they don't, they will need to be manually stopped to free the bound ports on localhost.

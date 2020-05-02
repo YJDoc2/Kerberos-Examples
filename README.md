@@ -2,8 +2,6 @@
 
 A repository containing usage examples for Kerberos JS module and Python Library.
 
-<hr />
-
 ## About
 
 This contains two examples about how to use the Kerberos JS Module and Python library.
@@ -20,6 +18,10 @@ Both examples demonstrate usage of these over HTTP protocol.
 Both also show that JS module and library can be used with each other, and there is not a constraint to use same language module/library on Server and client side.
 
 This repository contains two examples in two folders, whose explanation and working is in the respective README files in the respective folders. Basic explanation is given below.
+
+## Building
+
+<strong>NOTE : for reducing the size of repository, as well as of redundant copies, the actual module/library folder were linked using symlinks while development. Before running, replace all Kerberos symlinks with Kerberos python library, and Kerberos-JS symlink with Kerberos JS module.</strong>
 
 ## Flask Example
 

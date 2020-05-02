@@ -160,6 +160,7 @@ async function serverASave() {
 
   //? sanity check if input is empty dont do anything
   if (input === '') {
+    showError('Please enter data to send');
     return;
   }
 
@@ -234,6 +235,7 @@ async function serverBSave() {
   }
   const input = document.querySelector('#dataB').value.trim();
   if (input === '') {
+    showError('Please enter data to send');
     return;
   }
 
