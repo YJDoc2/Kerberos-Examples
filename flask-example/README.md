@@ -20,7 +20,7 @@ The detailed explanation of how the code is set up and works is done through det
 
 Brief explanation is as follows :
 
-In KDC folder, app py python file sets up the Authentication Service and Ticket Granting Service using Kerberos\*KDC class on port 5000.
+In KDC folder, app py python file sets up the Authentication Service and Ticket Granting Service using Kerberos_KDC class on port 5000.
 The Tickets folder contains the server structures that have been already generated.If new Structures are to be generated, first uncomment appropriate lines in app py file, then manually copy the newly generated A and B server structures in the data-servers/Tickets folders.
 For generating new TGS_SERVER structure, simply delete the file from Tickets folder.
 
